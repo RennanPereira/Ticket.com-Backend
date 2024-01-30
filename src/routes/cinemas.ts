@@ -28,7 +28,7 @@ export async function CinemaRoutes(app: FastifyInstance) {
 
       if (!checkCityExist) {
         return await reply.status(400).send({
-          error: 'Cidade não cadastrada.',
+          error: 'Cidade não cadastradaS.',
         })
       }
 
