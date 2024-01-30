@@ -52,8 +52,16 @@ export async function MoviesRoutes(app: FastifyInstance) {
     return reply.status(201).send()
   })
 
-  app.get('/', async () => {
-    const movies = await knex('movies')
+  app.get('/:id', async (request) => {
+    await knex('movies').select('cinemaName')
+
+    const getMovieParamsSchema = z.object({
+      cinemaName: z.string(),
+    })
+
+    const params = getMovieParamsSchema.parse(request.query)
+
+    const movies = await knex('movies').where('cinemaName', params.cinemaName)
     return { movies }
   })
 
