@@ -6,15 +6,15 @@ import { z } from 'Zod'
 export async function RegionRoutes(app: FastifyInstance) {
   app.post('/', async (request, reply) => {
     const createRegionBodySchema = z.object({
-      estate: z.string(),
-      city: z.string(),
+      estado: z.string(),
+      cidade: z.string(),
     })
-    const { estate, city } = createRegionBodySchema.parse(request.body)
+    const { estado, cidade } = createRegionBodySchema.parse(request.body)
 
     const checkCityExist = await knex
       .select('*')
-      .from('regions')
-      .where('city', city)
+      .from('regioes')
+      .where('cidade', cidade)
       .first()
 
     if (checkCityExist) {
@@ -23,25 +23,25 @@ export async function RegionRoutes(app: FastifyInstance) {
       })
     }
 
-    await knex('regions').insert({
+    await knex('regioes').insert({
       id: randomUUID(),
-      estate,
-      city,
+      estado,
+      cidade,
     })
     return reply.status(201).send()
   })
 
   app.get('/', async () => {
-    const regions = await knex('regions')
+    const regions = await knex('regioes')
     return { regions }
   })
 
   app.delete('/:id', async (request, reply) => {
-    const [regions] = await knex('regions').select('id')
+    const [regions] = await knex('regioes').select('id')
 
     const regionId = regions.id
 
-    await knex('regions').where('id', regionId).delete()
+    await knex('regioes').where('id', regionId).delete()
 
     return await reply.status(204).send()
   })

@@ -2,28 +2,33 @@ declare module 'knex/types/tables' {
   export interface tables {
     movies: {
       id: string
-      movieName: string
-      rating: string
-      parentalRating: string
-      length: string
-      cinemaName: string
-      language: string
-      type: string
-      city: string
+      titulo: string
+      genero: string
+      sinopse: string
+      classificacao_etaria: string
+      duracao: string
+      nome_original: string
+      direcao: string
+      distribuicao: string
+      pais_de_origem: string
+      nota_imdb: string
+      nota_rotten_tomatoes: string
+      em_cartaz: string
+      em_breve: string
     }
 
     regions: {
       id: string
-      estate: string
-      city: string
+      estado: string
+      cidade: string
     }
 
     cinemas: {
       id: string
-      cinemaName: string
-      address: string
-      estate: string
-      city: string
+      nome_do_cinema: string
+      endereco: string
+      estado: string
+      cidade: string
     }
   }
 }

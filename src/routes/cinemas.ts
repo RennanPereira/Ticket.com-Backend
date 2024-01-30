@@ -8,36 +8,36 @@ export async function CinemaRoutes(app: FastifyInstance) {
     '/',
 
     async (request, reply) => {
-      const [regions] = await knex('regions').select('id', 'estate')
+      const [regions] = await knex('regioes').select('id', 'estado')
 
-      const regionName = regions.estate
+      const regionName = regions.estado
 
       const createCinemasBodySchema = z.object({
-        cinemaName: z.string(),
-        address: z.string(),
-        city: z.string(),
+        nome_do_cinema: z.string(),
+        endereco: z.string(),
+        cidade: z.string(),
       })
-      const { cinemaName, address, city } = createCinemasBodySchema.parse(
-        request.body,
-      )
+      const { nome_do_cinema, endereco, cidade } =
+        createCinemasBodySchema.parse(request.body)
+        
       const checkCityExist = await knex
         .select('*')
-        .from('regions')
-        .where('city', city)
+        .from('regioes')
+        .where('cidade', cidade)
         .first()
 
       if (!checkCityExist) {
         return await reply.status(400).send({
-          error: 'Cidade não cadastradaS.',
+          error: 'Cidade não cadastrada.',
         })
       }
 
       await knex('cinemas').insert({
         id: randomUUID(),
-        cinemaName,
-        address,
-        estate: regionName,
-        city,
+        nome_do_cinema,
+        endereco,
+        estado: regionName,
+        cidade,
       })
 
       return reply.status(201).send()

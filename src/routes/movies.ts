@@ -6,30 +6,44 @@ import { z } from 'Zod'
 export async function MoviesRoutes(app: FastifyInstance) {
   app.post('/', async (request, reply) => {
     const createMoviesBodySchema = z.object({
-      movieName: z.string(),
-      rating: z.string(),
-      parentalRating: z.string(),
-      length: z.string(),
-      cinemaName: z.string(),
-      language: z.enum(['dublado', 'legendado']),
-      type: z.enum(['normal', '3d', 'IMAX']),
-      city: z.string(),
+      titulo: z.string(),
+      genero: z.string(),
+      sinopse: z.string(),
+      classificacao_etaria: z.string(),
+      duracao: z.string(),
+      nome_original: z.string(),
+      direcao: z.string(),
+      distribuicao: z.string(),
+      pais_de_origem: z.string(),
+      nota_imdb: z.string(),
+      nota_rotten_tomatoes: z.string(),
+      em_cartaz: z.enum(['1', '0']),
+      em_breve: z.enum(['1', '0']),
+      nome_do_cinema: z.string(),
+      cidade: z.string(),
     })
     const {
-      movieName,
-      rating,
-      parentalRating,
-      cinemaName,
-      length,
-      language,
-      type,
-      city,
+      titulo,
+      genero,
+      sinopse,
+      classificacao_etaria,
+      duracao,
+      nome_original,
+      direcao,
+      distribuicao,
+      pais_de_origem,
+      nota_imdb,
+      nota_rotten_tomatoes,
+      em_cartaz,
+      em_breve,
+      nome_do_cinema,
+      cidade,
     } = createMoviesBodySchema.parse(request.body)
 
     const checkCinemaExist = await knex
       .select('*')
       .from('cinemas')
-      .where('cinemaName', cinemaName)
+      .where('nome_do_cinema', nome_do_cinema)
       .first()
 
     if (!checkCinemaExist) {
@@ -37,43 +51,53 @@ export async function MoviesRoutes(app: FastifyInstance) {
         error: 'Cinema não cadastrado.',
       })
     }
-    await knex('movies').insert({
+    await knex('filmes').insert({
       id: randomUUID(),
-      movieName,
-      rating,
-      parentalRating,
-      length,
-      cinemaName,
-      language,
-      type,
-      city,
+      titulo,
+      genero,
+      sinopse,
+      classificacao_etaria,
+      duracao,
+      nome_original,
+      direcao,
+      distribuicao,
+      pais_de_origem,
+      nota_imdb,
+      nota_rotten_tomatoes,
+      em_cartaz,
+      em_breve,
+      nome_do_cinema,
+      cidade,
     })
 
     return reply.status(201).send()
   })
 
   app.get('/:id', async (request) => {
-    await knex('movies').select('cinemaName')
+    await knex('filmes').select('nome_do_cinema')
 
     const getMovieParamsSchema = z.object({
-      cinemaName: z.string(),
+      nome_do_cinema: z.string(),
     })
 
     const params = getMovieParamsSchema.parse(request.query)
 
-    const movies = await knex('movies').where('cinemaName', params.cinemaName)
+    const movies = await knex('filmes').where(
+      'nome_do_cinema',
+      params.nome_do_cinema,
+    )
     return { movies }
   })
 
   app.delete('/:id', async (request, reply) => {
-    await knex('movies').select('id')
+    await knex('filmes').select('id')
 
     const getMovieParamsSchema = z.object({
       id: z.string().uuid(),
     })
     const params = getMovieParamsSchema.parse(request.params)
 
-    await knex('movies').where('id', params.id).delete()
+    await knex('filmes').where('id', params.id).delete()
 
     return await reply.status(204).send()
   })
